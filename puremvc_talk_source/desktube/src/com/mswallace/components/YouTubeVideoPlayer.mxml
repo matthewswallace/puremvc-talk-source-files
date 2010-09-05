@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 creationComplete="init()"
+		 contentBackgroundColor="#000000"
+		 contentBackgroundAlpha="1" 
+		 xmlns:tubeloc="com.enefekt.tubeloc.*"
+		 >
+	<fx:Metadata>
+		[Event(name="sourceVideoChange",type="flash.events.Event")]
+	</fx:Metadata>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import com.greensock.TweenMax;
+			import com.greensock.easing.Quad;
+
+			
+			import mx.core.IVisualElement;
+			import mx.managers.PopUpManager;
+			
+			import spark.components.Application;
+			import spark.components.WindowedApplication;
+			public static const SOURCEVIDEO_CHANGE_EVENT:String = "sourceVideoChange";
+			
+			private var _sourceVideo:String;
+			private var player:Object;
+			private var  loader:Loader;
+			
+			
+
+			[Bindable(event="sourceVideoChange")]
+			public function get sourceVideo():String
+			{
+				return _sourceVideo;
+			}
+
+			public function set sourceVideo(value:String):void
+			{
+				if (_sourceVideo != value) {
+					_sourceVideo = value;
+					dispatchEvent(new Event(SOURCEVIDEO_CHANGE_EVENT));
+					/* 
+					tubelocMovie.playerWrapperUrl = "http://www.youtube.com/apiplayer?version=3";
+					tubelocMovie.loadVideoById(value) */;
+					
+					loader = new Loader();
+					loader.contentLoaderInfo.addEventListener(Event.INIT, onLoaderInit);
+					loader.load(new URLRequest("http://www.youtube.com/v/" +value +"?version=3"));
+					
+				}
+			}
+			
+			private function onLoaderInit(e:Event):void
+			{
+				
+				playerHolder.addChild(loader);
+				loader.content.addEventListener("onReady", onPlayerReady);
+
+				
+			}
+			
+			private function onPlayerReady(e:Event):void
+			{
+				player = loader.content;
+				// Set appropriate player dimensions for your application
+				player.setSize(854, 480);
+				player.setPlaybackQuality("large");
+				player.playVideo();
+				
+				
+			}
+
+			private function init():void
+			{
+				this.transformX = this.width * 0.5;
+				this.transformY = this.height * 0.5;
+				TweenMax.from(this, 0.25, {alpha:0, scaleX:4, scaleY:4, ease:Quad.easeOut});
+			}
+			
+			private function close(e:MouseEvent):void
+			{
+				
+				TweenMax.to(this, 0.25, {alpha:0, scaleX:4, scaleY:4, ease:Quad.easeOut,
+												onComplete:remove
+								});
+			}
+			
+			private function remove():void
+			{
+				player.destroy();
+				PopUpManager.removePopUp(this);
+			}
+
+		]]>
+	</fx:Script>
+	<s:Group width="100%" height="100%" 
+			 mouseChildren="false">
+		<s:Rect width="100%" height="100%">
+			<s:fill>
+				<s:SolidColor color="0x000000" alpha="0.8" />
+			</s:fill>
+		</s:Rect>
+	</s:Group>
+	
+	<s:Group verticalCenter="0" horizontalCenter="0"
+			 width="854" height="480" >
+		<s:Rect width="100%" height="100%">
+			<s:fill>
+				<s:SolidColor color="0x000000" alpha="0.8" />
+			</s:fill>
+		</s:Rect>
+		<mx:SWFLoader width="854" height="480" 
+		id="playerHolder"
+		/>
+		
+		<s:Button id="bn_close" label="X" width="15" height="15" cornerRadius="10"
+				  click="close(event)" 
+				  x="{(playerHolder.x + playerHolder.width) - (bn_close.width * 0.5)}" 
+				  y="{playerHolder.y  - (bn_close.height * 0.5)}"
+				  toolTip=""
+				  />
+	</s:Group>
+	
+	
+</s:Group>

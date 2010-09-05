@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009" 
+					   xmlns:s="library://ns.adobe.com/flex/spark" 
+					   xmlns:mx="library://ns.adobe.com/flex/mx"
+					   showStatusBar="false"
+					   skinClass="skins.Chromeless"
+					   creationComplete="creationComplete()" 
+					   >
+	
+	
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			
+			import com.mswallace.app.AppFacade;
+			import com.mswallace.app.notifications.AppNotifications;
+			
+			
+			
+			import skins.Chromeless;
+			
+			private var facade:AppFacade;
+			
+			/* init your Facade here and fire notification */
+			private function creationComplete():void
+			{
+				facade = AppFacade.getInstance( AppFacade.NAME );
+				facade.sendNotification( AppNotifications.APP_INIT, this );
+				this.maximize();
+			}
+			
+			/* do search fires a notification that facade is listing for  */
+			private function doSearch(e:Event):void
+			{
+				if(ti_search.text.length > 0)
+				{
+					facade.sendNotification( AppNotifications.GET_YOUTUBE_DATA, ti_search.text );
+					ti_search.text = "";
+				}
+					
+			}
+		
+		]]>
+	</fx:Script>
+	<!-- show this during search-->
+	
+	
+	<s:Group  width="100%" height="100%" >
+		
+		<s:Rect width="100%" height="100%">
+			<s:fill>
+				<s:SolidColor alpha="0.5" color="0x000000"/>
+			</s:fill>
+		</s:Rect>
+		
+	</s:Group>
+	
+	
+	<s:Group id="thumbs" width="100%" height="100%" />
+	
+	
+	<s:Group contentBackgroundAlpha="0.5" contentBackgroundColor="#000000">
+		<s:TextInput id="ti_search" 
+					 width="400" 
+					 fontSize="20" 
+					 top="10" left="10" 
+					 color="#ffffff" enter="doSearch(event)" />
+	</s:Group>
+	
+	<s:Group 
+		id="progHolder"
+		width="100%" height="100%" 
+		visible="false"
+		showEffect="Fade"
+		hideEffect="Fade"
+		mouseChildren="false"
+		>
+		
+		<s:Rect width="100%" height="100%">
+			<s:fill>
+				<s:SolidColor alpha="0.8" color="0x000000" />
+			</s:fill>
+		</s:Rect>
+		
+		<mx:ProgressBar 
+			id="progbar"
+			label="RETRIVING VIDEOS"
+			indeterminate="true"
+			horizontalCenter="0" 
+			verticalCenter="0"
+			labelPlacement="center" 
+			width="95%"
+			height="100"
+			fontSize="40"
+			/>
+	</s:Group>
+	
+</s:WindowedApplication>

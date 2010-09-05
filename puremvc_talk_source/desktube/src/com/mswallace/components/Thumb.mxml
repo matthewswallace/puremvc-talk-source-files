@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		  xmlns:s="library://ns.adobe.com/flex/spark" 
+		  xmlns:mx="library://ns.adobe.com/flex/mx"
+		  click="clickHandler(event)"
+		  mouseOver="mouseOver(event)"
+		  mouseOut="mouseOut(event)"
+		  alpha="0.7"
+		  creationComplete="init()"
+		  >
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			import ca.newcommerce.youtube.data.VideoData;
+			
+			import com.greensock.TweenMax;
+			import com.greensock.easing.Quad;
+			import com.mswallace.app.AppFacade;
+			import com.mswallace.app.notifications.AppNotifications;
+
+			
+			import mx.core.IVisualElement;
+			
+			import spark.components.Group;
+			
+			private var _vd:VideoData;
+			private var facade:AppFacade;
+			private var prevRotation:Number;
+			private var prevX:Number;
+			private var prevY:Number;
+		
+			private function init():void
+			{
+				facade = AppFacade.getInstance( AppFacade.NAME );
+				
+			}
+			
+			private function clickHandler(e:MouseEvent):void
+			{
+				facade.sendNotification(AppNotifications.PLAY_VIDEO, vd);
+			}
+			
+			private function mouseOver(e:MouseEvent):void
+			{
+				Group(parent).setElementIndex(this, Group(parent).numElements - 1);
+				prevRotation = this.rotation;
+				prevX = this.x;
+				prevY = this.y;
+				
+				TweenMax.to(this, 0.25, { alpha:1, x:parent.mouseX - (this.width * 0.5),
+										y:parent.mouseY - (this.height * 0.5),
+										rotation:0,
+										scaleX:2.5,
+										scaleY:2.5,
+										ease:Quad.easeOut
+				
+									});
+				
+			}
+			
+			private function mouseOut(e:MouseEvent):void
+			{
+				prevRotation = this.rotation;
+				
+				TweenMax.to(this, 0.25, { alpha:0.7, x:prevX,
+										y:prevY,
+										scaleX:1,
+										scaleY:1,
+										rotation:Math.random() * 350,
+										ease:Quad.easeOut
+										
+									});
+				
+				
+				
+			}
+			
+	
+			
+			///getters and setters
+			public function get vd():VideoData
+			{
+				return _vd;
+			}
+			
+			public function set vd(value:VideoData):void
+			{
+				if(value)
+				{
+					_vd = value;
+					image.source = _vd.media.thumbnails.first().url;
+				}
+				
+			}
+
+		]]>
+	</fx:Script>
+	
+	<mx:Image id="image" x="{0-image.width * 0.5}"
+			  y="{0-image.height * 0.5}"/>
+</s:Group>

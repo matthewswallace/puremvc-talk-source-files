@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<app:MainApp xmlns:fx="http://ns.adobe.com/mxml/2009"
+                       xmlns:s="library://ns.adobe.com/flex/spark"
+                       xmlns:mx="library://ns.adobe.com/flex/mx"
+                       xmlns:app="com.mwallace.twittersearch.main.view.*"
+                       width="100%"
+                       height="100%"
+                       >
+
+	
+	
+	<s:TextInput id="tx_search" width="300" top="10" left="10" enter="search(tx_search.text)"/>       
+	        
+    <s:List 
+    	id="list"
+    	top="50"
+    	left="10"
+    	right="10"
+    	bottom="40"
+    	labelFunction="listBoxLableHandler"
+    	/>
+    	
+   	<s:Button id="bn" left="10" bottom="10" click="pick()"/>          
+
+</app:MainApp>

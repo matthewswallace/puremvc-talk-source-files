@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:WindowedApplication xmlns:fx="http://ns.adobe.com/mxml/2009"
+                       xmlns:s="library://ns.adobe.com/flex/spark"
+                       xmlns:mx="library://ns.adobe.com/flex/mx"
+                       width="100%"
+                       height="100%"
+                       creationComplete="this.maximize()"
+                       >
+                       
+     <fx:Script>
+     	<![CDATA[
+     		import mx.rpc.events.FaultEvent;
+     		import mx.rpc.IResponder;
+     		import mx.rpc.AsyncToken;
+     		import mx.rpc.events.ResultEvent;
+     		import mx.rpc.http.HTTPService;
+     		
+     		private function doSearch():void
+     		{
+     			
+     			var service:HTTPService = new HTTPService();
+     			service.url = "http://search.twitter.com/search.atom?rpp=100&q=" + tx_search.text;
+     		
+     			service.addEventListener(ResultEvent.RESULT, result);
+     			service.addEventListener(FaultEvent.FAULT, fault)
+     			service.send();
+     			tx_search.text = "";
+     		}
+     		
+     		public function result(e:ResultEvent):void
+     		{
+     			av.dataProvider = e.result.feed.entry;
+     		}
+     		
+     		public function fault(e:FaultEvent):void
+     		{
+     			
+     		}
+     		
+     		private function listBoxLableHandler(obj:Object):String
+     		{
+     			var tweet:String = obj.author.name + " says : " + obj.title;
+     			return tweet;
+     		}
+     	]]>
+     </fx:Script>
+	
+	
+	<s:TextInput id="tx_search" width="300" top="10" left="10" enter="doSearch()"/>
+	
+	<s:List id="av" top="40" left="10" right="10" bottom="10"  labelFunction="listBoxLableHandler" />
+		
+</s:WindowedApplication>
